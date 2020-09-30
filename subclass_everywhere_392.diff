@@ -1,0 +1,48 @@
+diff --git a/aCis_gameserver/config/players.properties b/aCis_gameserver/config/players.properties
+index 3832306..9956216 100644
+--- a/aCis_gameserver/config/players.properties
++++ b/aCis_gameserver/config/players.properties
+@@ -251,6 +251,10 @@
+ # Allow player subclass addition without checking for unique quest items. Default : False.
+ SubClassWithoutQuests = False
+ 
++# Allow player to add/change subclass at all village master
++# Default: False
++AltSubclassEverywhere = False
++
+ #=============================================================
+ #                        Buffs config
+ #=============================================================
+diff --git a/aCis_gameserver/java/net/sf/l2j/Config.java b/aCis_gameserver/java/net/sf/l2j/Config.java
+index 5a3f641..9ff37ab 100644
+--- a/aCis_gameserver/java/net/sf/l2j/Config.java
++++ b/aCis_gameserver/java/net/sf/l2j/Config.java
+@@ -460,6 +460,7 @@
+ 	public static boolean ES_SP_BOOK_NEEDED;
+ 	public static boolean DIVINE_SP_BOOK_NEEDED;
+ 	public static boolean SUBCLASS_WITHOUT_QUESTS;
++	public static boolean ALT_GAME_SUBCLASS_EVERYWHERE;
+ 	
+ 	/** Buffs */
+ 	public static boolean STORE_SKILL_COOLTIME;
+@@ -1130,6 +1131,7 @@
+ 		ES_SP_BOOK_NEEDED = players.getProperty("EnchantSkillSpBookNeeded", true);
+ 		DIVINE_SP_BOOK_NEEDED = players.getProperty("DivineInspirationSpBookNeeded", true);
+ 		SUBCLASS_WITHOUT_QUESTS = players.getProperty("SubClassWithoutQuests", false);
++		ALT_GAME_SUBCLASS_EVERYWHERE = players.getProperty("AltSubclassEverywhere", false);
+ 		
+ 		MAX_BUFFS_AMOUNT = players.getProperty("MaxBuffsAmount", 20);
+ 		STORE_SKILL_COOLTIME = players.getProperty("StoreSkillCooltime", true);
+diff --git a/aCis_gameserver/java/net/sf/l2j/gameserver/model/actor/instance/VillageMaster.java b/aCis_gameserver/java/net/sf/l2j/gameserver/model/actor/instance/VillageMaster.java
+index 047ea52..ade7458 100644
+--- a/aCis_gameserver/java/net/sf/l2j/gameserver/model/actor/instance/VillageMaster.java
++++ b/aCis_gameserver/java/net/sf/l2j/gameserver/model/actor/instance/VillageMaster.java
+@@ -694,6 +694,8 @@
+ 	
+ 	public final boolean checkVillageMaster(ClassId pclass)
+ 	{
++		if (Config.ALT_GAME_SUBCLASS_EVERYWHERE)
++			return true;
+ 		return checkVillageMasterRace(pclass) && checkVillageMasterTeachType(pclass);
+ 	}
+ 	
